@@ -47,7 +47,7 @@ fatality <- aggregate(FATALITIES ~ EVTYPE, data = tstormData, sum)
 fatality <- fatality[order(-fatality$FATALITIES),][1:10,]
 fatality$EVTYPE <- factor(fatality$EVTYPE, levels = fatality$EVTYPE)
 ggplot(fatality, aes(x = EVTYPE, y = FATALITIES)) +
-      geom_bar(stat = "identity", fill = "blue", las = 3) +
+      geom_bar(stat = "identity", fill = "blue") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
       xlab("Event Type") + ylab("Fatalities") + ggtitle("Number of fatalities by top 10 Weather Events")
 ```
@@ -58,9 +58,19 @@ injury <- aggregate(INJURIES ~ EVTYPE, data=tstormData, sum)
 injury <- injury[order(-injury$INJURIES), ][1:10, ]
 injury$EVTYPE <- factor(injury$EVTYPE, levels = injury$EVTYPE)
 ggplot(injury, aes(x = EVTYPE, y = INJURIES)) + 
-    geom_bar(stat = "identity", fill = "green", las = 3) + 
+    geom_bar(stat = "identity", fill = "green") + 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
     xlab("Event Type") + ylab("Injuries") + ggtitle("Number of injuries by top 10 Weather Events")
 ```
 
-
+### Plotting Damages
+```{r}
+damages <- aggregate(PROPDMGNUM + CROPDMGNUM ~ EVTYPE, data=tstormData, sum)
+names(damages) = c("EVTYPE", "TOTALDAMAGE")
+damages <- damages[order(-damages$TOTALDAMAGE), ][1:10, ]
+damages$EVTYPE <- factor(damages$EVTYPE, levels = damages$EVTYPE)
+ggplot(damages, aes(x = EVTYPE, y = TOTALDAMAGE)) + 
+    geom_bar(stat = "identity", fill = "yellow") + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    xlab("Event Type") + ylab("Damages ($)") + ggtitle("Property & Crop Damages by top 10 Weather Events")
+```
