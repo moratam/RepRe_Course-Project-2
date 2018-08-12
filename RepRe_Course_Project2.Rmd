@@ -8,7 +8,7 @@ output: html_document
 ## Synopsis
 
 ## Data Processing
-```{r}
+```{r echo = FALSE}
 library(plyr)
 library(dplyr)
 library(ggplot2)
