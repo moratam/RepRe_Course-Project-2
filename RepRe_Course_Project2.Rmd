@@ -9,14 +9,49 @@ output: html_document
 
 ## Data Processing
 ```{r}
-stormData <- read.csv(bzfile("C:/Users/Ammo/Documents/RepRe_Course-Project-2/repdata%2Fdata%2FStormData.csv.bz2"))
+library(plyr)
+library(dplyr)
+library(ggplot2)
+
+stormData <- read.csv("C:/Users/Ammo/Documents/RepRe_Course-Project-2/StormData.csv")
 # Number of unique events
+dim(stormData)
+names(stormData)
 
 ```
 
 ```{r}
 length(unique(stormData$EVTYPE))
+
+##Make only required data avaliable
+
+tstormData <- stormData[,c('EVTYPE','FATALITIES','INJURIES', 'PROPDMG', 'PROPDMGEXP', 'CROPDMG', 'CROPDMGEXP')]
+tstormData$PROPDMGNUM = 0
+tstormData[tstormData$PROPDMGEXP == "H", ]$PROPDMGNUM = tstormData[tstormData$PROPDMGEXP == "H", ]$PROPDMG * 10^2
+tstormData[tstormData$PROPDMGEXP == "K", ]$PROPDMGNUM = tstormData[tstormData$PROPDMGEXP == "K", ]$PROPDMG * 10^3
+tstormData[tstormData$PROPDMGEXP == "M", ]$PROPDMGNUM = tstormData[tstormData$PROPDMGEXP == "M", ]$PROPDMG * 10^6
+tstormData[tstormData$PROPDMGEXP == "B", ]$PROPDMGNUM = tstormData[tstormData$PROPDMGEXP == "B", ]$PROPDMG * 10^9
+
+tstormData$CROPDMGNUM = 0
+tstormData[tstormData$CROPDMGEXP == "H", ]$CROPDMGNUM = tstormData[tstormData$CROPDMGEXP == "H", ]$CROPDMG * 10^2
+tstormData[tstormData$CROPDMGEXP == "K", ]$CROPDMGNUM = tstormData[tstormData$CROPDMGEXP == "K", ]$CROPDMG * 10^3
+tstormData[tstormData$CROPDMGEXP == "M", ]$CROPDMGNUM = tstormData[tstormData$CROPDMGEXP == "M", ]$CROPDMG * 10^6
+tstormData[tstormData$CROPDMGEXP == "B", ]$CROPDMGNUM = tstormData[tstormData$CROPDMGEXP == "B", ]$CROPDMG * 10^9
+
+```
+## Results
+### Ploting number of fatalities with most harmful event type
+
+```{r}
+fatality <- aggregate(FATALITIES ~ EVTYPE, data = tstormData, sum)
+fatality <- fatality[order(-fatality$FATALITIES),][1:10,]
+fatality$EVTYPE <- factor(fatality$EVTYPE, levels = fatality$EVTYPE)
+ggplot(fatality, aes(x = EVTYPE, y = FATALITIES)) +
+      geom_bar(stat = "identity", fill = "blue", las = 3) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+      xlab("Event Type") + ylab("Fatalities") + ggtitle("Number of fatalities by top 10 Weather Events")
 ```
 
+### Plotting Injury
 
-## Results
+
